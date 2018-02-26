@@ -1,0 +1,8 @@
+{% extends "master.html" %}
+{% block content %}
+<form method="POST" action="{{ url_for('login', next=next) }}">
+    <div>{{ form.username.label }}: {{ form.username(class="css_class") }}</div>
+    <div>{{ form.password.label }}: {{ form.password() }}</div>
+    <button type="submit">Log in</button>
+</form>
+{% endblock %}
