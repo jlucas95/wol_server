@@ -8,7 +8,9 @@ from user import WolUser
 from util import is_safe_url
 from pprint import pprint
 from urllib.request import Request
+from data import DataLayer
 
+data_layer = DataLayer()
 
 app = Flask(__name__)
 app.debug=True
@@ -29,11 +31,13 @@ def login():
     next = request.args.get('next')
     if request.method == "POST":
         if form.validate():
+            user = data_layer.getUser(form.username.data, form.password.data)
 
-            user = WolUser.getUser(form.username.data, form.password.data)
-            if user == None:
+            if not user:
                 print("user does not exist")
                 return abort(400)
+
+            user = WolUser(user[0], user[1])
             login_user(user)
 
 
@@ -41,7 +45,7 @@ def login():
             pprint(request.data)
             if not is_safe_url(next):
                 print("unsafe redirect")
-                return abort(400 )
+                return abort(400)
             print("redirecting to {}".format(next or url_for("index")))
             return redirect(next or url_for("index"))
         else:
@@ -52,6 +56,7 @@ def login():
 @login_manager.user_loader
 def load_user(user_id):
     if user_id:
+
         return WolUser.get(user_id)
     return None
 
@@ -59,7 +64,7 @@ def load_user(user_id):
 @login_required
 def wake():
     print("wake got {}".format(request.data))
-    Re
+
     #wakeonlan.send_magic_packet()
 
 @app.route("/arp")

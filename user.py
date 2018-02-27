@@ -2,21 +2,13 @@ from flask_login import UserMixin
 
 class WolUser(UserMixin):
 
-    def __init__(self, username : str, password : str):
+    users = {}
+
+    def __init__(self, id : int, username : str):
         super()
         self.username = username
-        self.password = password
-        self.id = 1
-
-    jan = None
-    @staticmethod
-    def getUser(username : str, password : str):
-        print("finding {}:{}".format(username, password))
-        if username == "jan" and password == "esther":
-            WolUser.jan = WolUser("jan", "esther")
-            return WolUser.jan
-        else:
-            return None
+        self.id = id
+        self.users[id] = self
 
     @property
     def is_anonymous(self):
@@ -35,4 +27,6 @@ class WolUser(UserMixin):
 
     @classmethod
     def get(cls, user_id):
-        return WolUser.jan
+        print("users: {}, id: {}".format(cls.users, user_id))
+        return cls.users[user_id]
+
