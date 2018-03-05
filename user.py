@@ -30,3 +30,10 @@ class WolUser(UserMixin):
         print("users: {}, id: {}".format(cls.users, user_id))
         return cls.users[user_id]
 
+    def __repr__(self):
+        return "<WolUser {}, auth:{}, active:{}, anon:{}".format(
+            self.get_id(),
+            self.is_authenticated,
+            self.is_active,
+            self.is_anonymous)
+

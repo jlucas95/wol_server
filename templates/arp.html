@@ -1,26 +1,56 @@
 {% extends "master.html" %}
 {% block content %}
-<table>
-{% for interface in data %}
-    <tr>
-        <th>interface: {{interface.name}}</th>
-    </tr>
-    {% for address in interface.entries %}
-    <tr class="address" onclick=select(this)>
-        <td class="ip">{{address[0]}}</td>
-        <td class="mac">{{address[1]}}</td>
-    </tr>
-    {% endfor %}
-{% endfor %}
 
+<div class="container">
+    <div class="row">
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-5">
+            <h1>macs in arp</h1>
+            {% if data %}
+            <ul class="list-group">
+                {% for interface in data %}
+                <li class="list-group-item">
+                    <b>interface: {{interface.name}}</b>
+                </li>
+                {% for address in interface.entries %}
+                <li class="address list-group-item" onclick=select(this)>
+                    <span class="ip">{{address["ip"]}}: </span>
+                    <span class="mac">{{address["mac"]}}</span>
+                </li>
+                {% endfor %}
+                {% endfor %}
 
-</table>
+            </ul>
+            {% else %}
+            no adresses found using arp...
+            {% endif %}
+        </div>
+        <div class="col-sm-5">
+            <h1>previous macs</h1>
+            {% if macs %}
+            <ul class="list-group">
+                {% for mac in macs %}
+                <li class="address list-group-item" onclick=select(this)>
+                    <div class="mac">{{mac[0]}}</div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div>no macs known!</div>
+            {% endif %}
+        </div>
+        <div class="col-sm-1"></div>
+    </div>
+    <div class="row">
+        <form method="post" action="/wake">
+            <label for="mac">Mac addres</label>
+            <input type="text" id="mac" name="mac">
+            <input id="wake" type="submit" value="Wake!">
+        </form>
+    </div>
+</div>
 
-<form>
-
-    <input type="text" id="mac">
-    <button id="wake">Wake!</button>
-</form>
 
 <script>
 
@@ -28,6 +58,8 @@ function select(caller){
     var mac = $(caller).find(".mac").text()
     $("#mac").val(mac);
 }
+
+
 </script>
 {% endblock %}
 

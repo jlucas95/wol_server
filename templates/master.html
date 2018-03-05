@@ -1,21 +1,35 @@
 <html>
-    <head>
-        <link rel="stylesheet" href="static/style.css">
-        <script
-          src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-          integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
-          crossorigin="anonymous"></script>
-    </head>
-    <body>
-        <h1>Wol interface</h1>
-        {% if current_user.is_authenticated %}
-            hello {{current_user.username}}
-        {% else %}
-            Not logged in
-        {% endif %}
+<head>
+    <link rel="stylesheet" href="static/style.css">
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+            crossorigin="anonymous"></script>
+    <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous">
 
-        {% block content %}
-        No Content...
-        {% endblock %}
-    </body>
+</head>
+<body>
+
+
+<nav class="navbar navbar-dark bg-dark navbar-expand-sm">
+    <a class="navbar-brand" href="/">WoL</a>
+    <a class="navbar-nav" href="/arp">arp</a>
+    <div class="nav navbar-nav navbar-right ml-auto ">
+        {% if current_user.is_authenticated %}
+           <div class="header-login">Logged in as {{current_user.username}} <a href="/logout">log out</a></div>
+        {% else %}
+        <a class="header-login" href="/login">Login</a>
+        {% endif %}
+    </div>
+</nav>
+
+
+{% block content %}
+No Content...
+{% endblock %}
+</body>
 </html>
