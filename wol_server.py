@@ -70,7 +70,7 @@ def wake():
     print("wake got {}".format(data))
 
     data_layer.addMac(current_user.id, data)
-    #wakeonlan.send_magic_packet()
+    wakeonlan.send_magic_packet(data)
 
 
 @app.route("/arp")
