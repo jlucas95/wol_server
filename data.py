@@ -19,7 +19,7 @@ class DataLayer:
         except FileNotFoundError:
             setup = True
 
-        conn = sqlite3.connect(DB_NAME)
+        conn = sqlite3.connect(DB_NAME, check_same_thread=False)
         cur = conn.cursor()
         # create the tables
         cur.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT UNIQUE, password BINARY(64), salt BINARY(8), admin BOOLEAN DEFAULT 0);")
@@ -35,7 +35,7 @@ class DataLayer:
 
     def queryDB(self, sql, parameters=(), more=False):
         if not self.conn:
-            self.conn = sqlite3.connect(DB_NAME)
+            self.conn = sqlite3.connect(DB_NAME, check_same_thread=False)
         cur = self.conn.cursor()
         cur.execute(sql, parameters)
         return cur.fetchone() if not more else cur.fetchall()
