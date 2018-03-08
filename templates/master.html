@@ -14,25 +14,25 @@
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark navbar-expand-sm">
-    <a class="navbar-brand" href="/">WoL</a>
+    <a class="navbar-brand" href="{{ url_for('index') }}">WoL</a>
     <ul class="navbar-nav ">
         <li class="nav-item">
-            <a class="nav-link " href="/arp">arp</a>
+            <a class="nav-link " href="{{ url_for('arp') }}">arp</a>
         </li>
         {% if current_user.is_admin %}
         <li class="nav-item">
-            <a class="nav-link" href="/settings">settings</a>
+            <a class="nav-link" href="{{ url_for('settings') }}">settings</a>
         </li>
         {% endif %}
         <li class="nav-item">
-            <a class="nav-link" href="/credits">credits</a>
+            <a class="nav-link" href="{{ url_for('credits') }}">credits</a>
         </li>
     </ul>
     <div class="nav navbar-nav navbar-right ml-auto ">
         {% if current_user.is_authenticated %}
-        <div class="header-login">Logged in as {{current_user.username}} <a href="/logout">log out</a></div>
+        <div class="header-login">Logged in as {{current_user.username}} <a href="{{ url_for('logout') }}">log out</a></div>
         {% else %}
-        <a class="header-login" href="/login">Login</a>
+        <a class="header-login" href="{{ url_for('login') }}">Login</a>
         {% endif %}
     </div>
 </nav>

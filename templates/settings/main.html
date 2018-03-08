@@ -4,8 +4,8 @@
 {% block content %}
 <!-- list -->
 {% set navigation_bar = [
-("main", "/settings"),
-("change password", "/settings/change_pw")
+("main", "url_for('settings')"),
+("change password", "url_for('settings/change_pw')")
 ] %}
 {% set active_page = active_page|default('main') %}
 
