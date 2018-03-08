@@ -4,11 +4,12 @@ class WolUser(UserMixin):
 
     users = {}
 
-    def __init__(self, id : int, username : str):
+    def __init__(self, id : int, username : str, admin: bool):
         super()
         self.username = username
         self.id = id
         self.users[id] = self
+        self.is_admin = bool(admin)
 
     @property
     def is_anonymous(self):
@@ -37,3 +38,7 @@ class WolUser(UserMixin):
             self.is_active,
             self.is_anonymous)
 
+from wtforms import Form, PasswordField, validators
+class updatePasswordForm(Form):
+    old_pw = PasswordField("old_pw", [validators.DataRequired()])
+    new_pw = PasswordField("new_pw", [validators.DataRequired()])

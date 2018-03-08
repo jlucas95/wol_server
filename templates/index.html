@@ -3,4 +3,7 @@
 <h1>Wol interface</h1>
 <p>Small server to wake computers on a local network</p>
 
+{% if current_user.name == "root" %}
+<div class="">using default username!!!</div>
+{% endif %}
 {% endblock %}

@@ -3,25 +3,39 @@ from itertools import groupby
 import os
 from hashlib import sha512
 import subprocess
+
+DB_NAME = 'data.db'
 if os.name == "posix":
     import python_arptable as arp_table
-
 
 
 class DataLayer:
     def __init__(self):
         self.conn = None
-        conn = sqlite3.connect('example.db')
+        setup = False
+        try:
+            f = open("data.db")
+            f.close()
+        except FileNotFoundError:
+            setup = True
+
+        conn = sqlite3.connect(DB_NAME)
         cur = conn.cursor()
         # create the tables
-        cur.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT UNIQUE, password BINARY(64), salt BINARY(8));")
+        cur.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT UNIQUE, password BINARY(64), salt BINARY(8), admin BOOLEAN DEFAULT 0);")
         cur.execute("CREATE TABLE IF NOT EXISTS macs (id INTEGER REFERENCES users(id), address TEXT)")
         conn.commit()
+
+        if setup:
+            pass_hash, salt = self.hash_salt("root")
+            cur.execute("INSERT INTO Users(name, password, salt, admin) VALUES (?, ?, ?, ?)", ("root", pass_hash, salt, 1))
+            conn.commit()
+
         conn.close()
 
     def queryDB(self, sql, parameters=(), more=False):
         if not self.conn:
-            self.conn = sqlite3.connect('example.db')
+            self.conn = sqlite3.connect(DB_NAME)
         cur = self.conn.cursor()
         cur.execute(sql, parameters)
         return cur.fetchone() if not more else cur.fetchall()
@@ -38,11 +52,29 @@ class DataLayer:
             return user
         return None
 
-    def addUser(self, name, password):
-        sha512(password.encode()).digest()
+    def hash_salt(self, password):
         salt = os.urandom(8)
         pass_hash = sha512(salt + password.encode()).digest()
-        self.queryDB("INSERT INTO users(name, password, salt) VALUES (?, ?, ?)", (name, pass_hash, salt))
+        return pass_hash, salt
+
+    def updateUserPassword(self, id, password):
+        pass_hash, salt = self.hash_salt(password)
+        self.updateUser(id, ["password", "salt"],[pass_hash, salt])
+
+
+    def updateUser(self, id, columns : iter, values: iter):
+        if len(columns) != len(values):
+            raise ValueError("length of columns and values is not the same")
+        values.append(id)
+        columns = [x + "=?"for x in columns]
+        query = "UPDATE Users SET {} WHERE id = ?".format(",".join(columns),values)
+        print(query)
+        self.queryDB(query, values)
+        self.conn.commit()
+
+    def addUser(self, name, password, admin=False):
+        pass_hash, salt = self.hash_salt(password)
+        self.queryDB("INSERT INTO users(name, password, salt, admin) VALUES (?, ?, ?, ?)", (name, pass_hash, salt, admin))
         self.conn.commit()
 
     def addMac(self, userId, macAddress):
@@ -89,3 +121,6 @@ class DataLayer:
             return self.get_arp_windows()
         else:
             return []  # panic!
+
+    def validate_password(self, name, pw):
+        return self.getUser(name, pw) is not None
