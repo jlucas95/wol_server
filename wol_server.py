@@ -14,7 +14,6 @@ from data import DataLayer
 data_layer = DataLayer()
 
 app = Flask(__name__)
-app.debug=True
 app.secret_key = os.urandom(32)
 
 login_manager = LoginManager()
